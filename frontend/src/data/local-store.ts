@@ -2,7 +2,9 @@ import { SEED_ROWS } from './seed'
 import type { EntryRow } from './types'
 
 // 本地持久化：数据放在 localStorage 里，刷新、关掉再打开都还在。
-const STORAGE_KEY = 'archaeology-field:entries'
+// v2：层位归属、探方台账结构变更，旧格式直接废弃，重新播种示例数据。
+const STORAGE_KEY = 'archaeology-field:entries:v2'
+export const LEDGER_KEY = 'ledger-event'
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
@@ -52,6 +54,19 @@ export function resetRows(key: string): EntryRow[] {
   const rows = clone(SEED_ROWS[key] ?? [])
   saveRows(key, rows)
   return rows
+}
+
+// 探方台账的待处理记录与层位数据放在同一个持久化结构里，随层位结论一起写入。
+export function listLedger(): EntryRow[] {
+  return listRows(LEDGER_KEY)
+}
+
+export function saveLedger(rows: EntryRow[]): void {
+  saveRows(LEDGER_KEY, rows)
+}
+
+export function nextId(rows: EntryRow[]): number {
+  return rows.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0) + 1
 }
 
 export function storageKey(): string {
