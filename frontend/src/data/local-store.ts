@@ -2,7 +2,8 @@ import { SEED_ROWS } from './seed'
 import type { EntryRow } from './types'
 
 // 本地持久化：数据放在 localStorage 里，刷新、关掉再打开都还在。
-const STORAGE_KEY = 'archaeology-field:entries'
+// 地层归属管控上线后行结构变了（归属人、记录人、编录历史等），存储键升到 v2，旧键数据不再读取。
+const STORAGE_KEY = 'archaeology-field:entries:v2'
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
